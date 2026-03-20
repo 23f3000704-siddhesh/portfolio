@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>About — Siddhesh Ram K.</title>
+  <link rel="stylesheet" href="shared.css"/>
+  <style>
+
+    body { padding-top: 60px; }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      padding: 80px var(--margin) 0;
+      display: flex; align-items: baseline;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--hairline);
+      padding-bottom: 20px;
+    }
+    .page-header-title {
+      font-family: var(--f-display);
+      font-size: clamp(40px, 6vw, 80px);
+      font-weight: 400; letter-spacing: -2px;
+      color: var(--ink);
+    }
+    .page-header-ref {
+      font-family: var(--f-mono);
+      font-size: 10px; letter-spacing: 2px;
+      color: var(--hairline-hi);
+    }
+
+    /* ── SECTION WRAPPER ── */
+    .about-section {
+      padding: 100px var(--margin);
+      position: relative;
+    }
+    .about-section + .about-section {
+      border-top: 1px solid var(--hairline);
+    }
+
+    /* Giant numeral — behind content */
+    .section-numeral {
+      font-family: var(--f-display);
+      font-size: clamp(120px, 18vw, 220px);
+      font-weight: 300;
+      color: var(--ink);
+      opacity: 0.04;
+      line-height: 1;
+      letter-spacing: -6px;
+      position: absolute;
+      top: 40px; left: calc(var(--margin) - 12px);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* Content sits above numeral */
+    .section-content { position: relative; z-index: 1; }
+
+    /* ── § 01  IDENTITY ── */
+    .identity-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .section-kicker {
+      font-family: var(--f-mono);
+      font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--hairline-hi); margin-bottom: 32px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .section-kicker::before {
+      content: ''; display: block;
+      width: 24px; height: 1px; background: var(--hairline-hi);
+    }
+    .bio-heading {
+      font-family: var(--f-display);
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 400; letter-spacing: -1.5px;
+      line-height: 1.1; color: var(--ink);
+      margin-bottom: 36px;
+    }
+    .bio-heading em { font-style: italic; color: var(--muted); }
+    .bio-text {
+      font-family: var(--f-body);
+      font-size: 16px; font-weight: 300;
+      line-height: 1.85; color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .bio-text strong { font-weight: 500; color: var(--ink); }
+
+    /* NVIDIA pull-quote */
+    .nvidia-quote {
+      border-left: 2px solid var(--accent);
+      padding: 20px 0 20px 28px;
+      margin-top: 40px;
+    }
+    .nvidia-quote p {
+      font-family: var(--f-display);
+      font-size: 20px; font-weight: 400; font-style: italic;
+      line-height: 1.5; color: var(--ink);
+      margin-bottom: 12px;
+    }
+    .nvidia-quote a {
+      font-family: var(--f-mono);
+      font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--accent); text-decoration: none;
+    }
+    .nvidia-quote a:hover { text-decoration: underline; }
+
+    /* Identity right column — stat items */
+    .stat-list { margin-top: 72px; }
+    .stat-item {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .stat-item:first-child { border-top: 1px solid var(--hairline); }
+    .stat-num {
+      font-family: var(--f-display);
+      font-size: clamp(48px, 6vw, 72px);
+      font-weight: 300; letter-spacing: -2px;
+      color: var(--ink); line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-num span { color: var(--accent); }
+    .stat-desc {
+      font-family: var(--f-body);
+      font-size: 12px; font-weight: 400;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--hairline-hi);
+    }
+
+    /* ── § 02  OPERATIONS ── */
+    .ops-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-top: 60px;
+    }
+    .ops-card {
+      background: var(--ink);
+      padding: 36px 28px;
+      position: relative;
+      transition: background 0.4s var(--silk);
+    }
+    .ops-card:hover { background: #1a1a14; }
+    .ops-card-top {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+    .ops-indicator {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #4CAF50;
+      animation: livePulse 2.4s ease infinite;
+    }
+    @keyframes livePulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(76,175,80,0.5); }
+      50%      { box-shadow: 0 0 0 6px rgba(76,175,80,0); }
+    }
+    .ops-card-type {
+      font-family: var(--f-mono);
+      font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(247,243,236,0.3);
+    }
+    .ops-company {
+      font-family: var(--f-display);
+      font-size: 26px; font-weight: 400; letter-spacing: -0.5px;
+      color: var(--cream); margin-bottom: 8px;
+    }
+    .ops-role {
+      font-family: var(--f-body);
+      font-size: 12px; font-weight: 300; letter-spacing: 0.5px;
+      color: rgba(247,243,236,0.55); margin-bottom: 20px;
+    }
+    .ops-meta {
+      font-family: var(--f-mono);
+      font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--accent); padding-top: 20px;
+      border-top: 1px solid rgba(247,243,236,0.08);
+    }
+
+    /* ── § 03  EDUCATION TIMELINE ── */
+    .timeline-wrap {
+      margin-top: 60px;
+      position: relative;
+    }
+    .timeline-track {
+      position: relative;
+      height: 2px;
+      background: var(--hairline);
+      margin-bottom: 48px;
+    }
+    .timeline-fill {
+      position: absolute; left: 0; top: 0; bottom: 0;
+      background: var(--accent);
+      width: 0;
+      transition: width 1.8s cubic-bezier(0.25,0,0,1);
+    }
+    .timeline-track.drawn .timeline-fill { width: 100%; }
+
+    .timeline-nodes {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+    .tnode {
+      position: relative;
+      padding-top: 24px;
+    }
+    .tnode::before {
+      content: '';
+      position: absolute; top: -33px; left: 0;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--cream);
+      border: 2px solid var(--hairline-hi);
+      transition: border-color 0.4s var(--silk), background 0.4s var(--silk);
+      z-index: 2;
+    }
+    .tnode.active::before { border-color: var(--accent); background: var(--accent); }
+    .tnode-year {
+      font-family: var(--f-mono);
+      font-size: 10px; letter-spacing: 2px;
+      color: var(--hairline-hi); margin-bottom: 8px;
+    }
+    .tnode-school {
+      font-family: var(--f-display);
+      font-size: 22px; font-weight: 400; letter-spacing: -0.5px;
+      color: var(--ink); margin-bottom: 4px;
+    }
+    .tnode-degree {
+      font-family: var(--f-body);
+      font-size: 12px; font-weight: 300; color: var(--muted);
+      line-height: 1.5;
+    }
+    .tnode-status {
+      display: inline-block; margin-top: 10px;
+      font-family: var(--f-mono);
+      font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    /* ── § 04  DOCTRINE ── */
+    .doctrine-section {
+      padding: 120px var(--margin);
+      text-align: center;
+      border-top: 1px solid var(--hairline);
+      background: var(--ink);
+    }
+    .doctrine-kicker {
+      font-family: var(--f-mono);
+      font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(247,243,236,0.3); margin-bottom: 40px;
+    }
+    .doctrine-text {
+      font-family: var(--f-display);
+      font-size: clamp(28px, 4.5vw, 60px);
+      font-weight: 300; font-style: italic;
+      line-height: 1.25; letter-spacing: -1px;
+      color: var(--cream);
+      max-width: 900px; margin: 0 auto 40px;
+    }
+    .doctrine-text em { color: var(--accent); font-style: normal; }
+    .doctrine-attr {
+      font-family: var(--f-mono);
+      font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(247,243,236,0.25);
+    }
+
+    @media (max-width: 900px) {
+      .identity-grid { grid-template-columns: 1fr; gap: 40px; }
+      .ops-grid { grid-template-columns: 1fr; gap: 2px; }
+      .timeline-nodes { grid-template-columns: 1fr; gap: 32px; }
+      .tnode::before { display: none; }
+    }
+  </style>
+</head>
+<body>
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+<div id="page-veil"></div>
+
+<nav id="nav">
+  <a href="index.html" class="nav-profile">
+    <div class="nav-avatar"><span class="nav-avatar-initials">SR</span></div>
+    <div class="nav-profile-info">
+      <span class="nav-profile-name">Siddhesh Ram K.</span>
+      <span class="nav-profile-role">AI/ML Engineer</span>
+    </div>
+  </a>
+  <div class="nav-divider"></div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="about.html" class="active">About</a>
+    <a href="projects.html">Projects</a>
+    <a href="skills.html">Skills</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<header class="page-header reveal">
+  <h1 class="page-header-title">Subject Profile</h1>
+  <span class="page-header-ref">DOC / SRK-ABOUT</span>
+</header>
+
+<!-- § 01 IDENTITY -->
+<section class="about-section">
+  <span class="section-numeral" aria-hidden="true">01</span>
+  <div class="section-content identity-grid">
+
+    <div>
+      <p class="section-kicker reveal">Identity</p>
+      <h2 class="bio-heading reveal reveal-d1">
+        Building things that <em>actually matter.</em>
+      </h2>
+      <p class="bio-text reveal reveal-d2">
+        I'm a <strong>parallel multi-disciplinary student</strong> — simultaneously pursuing
+        B.E. in Computer Science (AI & ML) at SRM Easwari Engineering College and a
+        BS in Data Science & Applications at IIT Madras, while working as a
+        <strong>Data Analyst Intern at RR Donnelley</strong>.
+      </p>
+      <p class="bio-text reveal reveal-d3">
+        I operate at the intersection of data engineering, analytics, and applied ML —
+        cleaning and modeling data with SQL and Python, building KPI dashboards in
+        Power BI and Tableau, and operationalizing models using pandas, NumPy,
+        scikit-learn, XGBoost, and TensorFlow.
+      </p>
+      <p class="bio-text reveal reveal-d4">
+        My focus is <strong>reliability and measurable outcomes</strong>: reducing turnaround
+        time, lowering defect rates, and translating messy data into decision-ready insight.
+      </p>
+
+      <div class="nvidia-quote reveal reveal-d5">
+        <p>Discovered a critical GPU crash bug in NVIDIA's cuOpt Cloud API during multi-vehicle optimization. Officially acknowledged as Bug ID 5525189.</p>
+        <a href="https://www.linkedin.com/pulse/reported-validation-bug-nvidia-cuopt-cloud-api-solver-siddhesh-ram-e7ykc" target="_blank" data-no-transition>Read the full write-up →</a>
+      </div>
+    </div>
+
+    <div class="stat-list">
+      <div class="stat-item reveal">
+        <div class="stat-num">2<span>+</span></div>
+        <div class="stat-desc">Degrees pursued in parallel</div>
+      </div>
+      <div class="stat-item reveal reveal-d1">
+        <div class="stat-num"><span>#</span>1</div>
+        <div class="stat-desc">NVIDIA bug officially acknowledged</div>
+      </div>
+      <div class="stat-item reveal reveal-d2">
+        <div class="stat-num">10<span>+</span></div>
+        <div class="stat-desc">Technologies in active use</div>
+      </div>
+      <div class="stat-item reveal reveal-d3">
+        <div class="stat-num">∞</div>
+        <div class="stat-desc">Problems worth solving</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- § 02 OPERATIONS -->
+<section class="about-section">
+  <span class="section-numeral" aria-hidden="true">02</span>
+  <div class="section-content">
+    <p class="section-kicker reveal">Currently Active</p>
+    <h2 class="bio-heading reveal reveal-d1" style="max-width:600px">
+      Three systems running <em>simultaneously.</em>
+    </h2>
+    <div class="ops-grid">
+      <div class="ops-card reveal reveal-d1">
+        <div class="ops-card-top">
+          <span class="ops-indicator"></span>
+          <span class="ops-card-type">Employment</span>
+        </div>
+        <div class="ops-company">RR Donnelley</div>
+        <div class="ops-role">Data Analyst Intern</div>
+        <div class="ops-meta">Jun 2025 → Present</div>
+      </div>
+      <div class="ops-card reveal reveal-d2">
+        <div class="ops-card-top">
+          <span class="ops-indicator"></span>
+          <span class="ops-card-type">Education</span>
+        </div>
+        <div class="ops-company">SRM Easwari</div>
+        <div class="ops-role">B.E. CSE — AI & ML · Pre-Final Year</div>
+        <div class="ops-meta">2022 → Present</div>
+      </div>
+      <div class="ops-card reveal reveal-d3">
+        <div class="ops-card-top">
+          <span class="ops-indicator"></span>
+          <span class="ops-card-type">Education</span>
+        </div>
+        <div class="ops-company">IIT Madras</div>
+        <div class="ops-role">BS Data Science · Diploma Level</div>
+        <div class="ops-meta">2023 → Present</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- § 03 EDUCATION TIMELINE -->
+<section class="about-section">
+  <span class="section-numeral" aria-hidden="true">03</span>
+  <div class="section-content">
+    <p class="section-kicker reveal">Education</p>
+    <h2 class="bio-heading reveal reveal-d1" style="max-width:600px">
+      The path so far.
+    </h2>
+
+    <div class="timeline-wrap reveal reveal-d2">
+      <div class="timeline-track" id="timeline-track">
+        <div class="timeline-fill"></div>
+      </div>
+      <div class="timeline-nodes">
+        <div class="tnode">
+          <div class="tnode-year">2022</div>
+          <div class="tnode-school">SRM Easwari</div>
+          <div class="tnode-degree">B.E. in Computer Science<br/>Artificial Intelligence & ML</div>
+          <span class="tnode-status active">Active · Pre-Final Year</span>
+        </div>
+        <div class="tnode">
+          <div class="tnode-year">2023</div>
+          <div class="tnode-school">IIT Madras</div>
+          <div class="tnode-degree">BS in Data Science<br/>& Applications</div>
+          <span class="tnode-status active">Active · Diploma Level</span>
+        </div>
+        <div class="tnode active">
+          <div class="tnode-year">2025 — Now</div>
+          <div class="tnode-school">RR Donnelley</div>
+          <div class="tnode-degree">Data Analyst Intern<br/>Analytics & Dashboards</div>
+          <span class="tnode-status active">Currently Running</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- § 04 DOCTRINE -->
+<section class="doctrine-section">
+  <p class="doctrine-kicker reveal">Field Doctrine</p>
+  <p class="doctrine-text reveal reveal-d1">
+    "No one cares about <em>any technology</em> unless it's a solution to a problem."
+  </p>
+  <p class="doctrine-attr reveal reveal-d2">— The principle behind every line of code</p>
+</section>
+
+<script>
+// Timeline draws on scroll
+(function(){
+  const track = document.getElementById('timeline-track');
+  if (!track) return;
+  const obs = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) {
+      track.classList.add('drawn');
+      obs.disconnect();
+    }
+  }, { threshold: 0.4 });
+  obs.observe(track);
+})();
+</script>
+
+<script src="shared.js"></script>
+</body>
+</html>

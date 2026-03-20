@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Contact — Siddhesh Ram K.</title>
+  <link rel="stylesheet" href="shared.css"/>
+  <style>
+    body { padding-top: 60px; min-height: 100vh; }
+
+    .contact-wrap {
+      min-height: calc(100vh - 60px);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* ── LEFT ── */
+    .contact-left {
+      padding: 80px var(--margin);
+      display: flex; flex-direction: column;
+      justify-content: space-between;
+      border-right: 1px solid var(--hairline);
+    }
+
+    .heading-eyebrow {
+      font-family: var(--f-mono);
+      font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--hairline-hi); margin-bottom: 24px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .heading-eyebrow::before {
+      content: ''; display: block;
+      width: 24px; height: 1px; background: var(--hairline-hi);
+    }
+
+    .heading-main {
+      font-family: var(--f-display);
+      font-size: clamp(56px, 8vw, 100px);
+      font-weight: 400; letter-spacing: -3px;
+      line-height: 0.95; color: var(--ink);
+      position: relative; display: inline-block;
+      cursor: default;
+    }
+    .heading-main::before,
+    .heading-main::after {
+      content: attr(data-text);
+      position: absolute; inset: 0;
+      pointer-events: none; opacity: 0;
+    }
+    .heading-main::before { color: var(--accent);  clip-path: inset(30% 0 40% 0); }
+    .heading-main::after  { color: var(--ink);   clip-path: inset(55% 0 10% 0); left: 2px; }
+    .heading-main:hover::before { opacity: 0.4; animation: g1 0.3s steps(2) infinite; }
+    .heading-main:hover::after  { opacity: 0.3; animation: g2 0.3s steps(2) infinite 0.05s; }
+    @keyframes g1 {
+      0%   { transform: translateX(-2px); clip-path: inset(20% 0 50% 0); }
+      50%  { transform: translateX(2px);  clip-path: inset(40% 0 20% 0); }
+      100% { transform: translateX(-1px); clip-path: inset(10% 0 60% 0); }
+    }
+    @keyframes g2 {
+      0%   { transform: translateX(2px);  clip-path: inset(60% 0 10% 0); }
+      50%  { transform: translateX(-2px); clip-path: inset(20% 0 50% 0); }
+      100% { transform: translateX(1px);  clip-path: inset(50% 0 30% 0); }
+    }
+
+    .gold-rule {
+      display: block; width: 80px; height: 1.5px;
+      background: var(--accent); margin-top: 8px; margin-bottom: 28px;
+    }
+
+    .heading-sub {
+      font-family: var(--f-body);
+      font-size: 14px; font-weight: 300;
+      color: var(--muted); line-height: 1.7;
+      margin-bottom: 56px;
+    }
+
+    /* Channel table */
+    .channel-header {
+      display: grid;
+      grid-template-columns: 90px 1fr 70px;
+      gap: 16px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--hairline-hi);
+    }
+    .channel-header span {
+      font-family: var(--f-mono);
+      font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--hairline-hi);
+    }
+    .channel-row {
+      display: grid;
+      grid-template-columns: 90px 1fr 70px;
+      gap: 16px; padding: 18px 0;
+      border-bottom: 1px solid var(--hairline);
+      text-decoration: none; color: var(--ink);
+      transition: padding-left 0.45s cubic-bezier(0.25,0,0,1);
+      position: relative; overflow: hidden;
+    }
+    .channel-row::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 2px; background: var(--accent);
+      transform: scaleY(0); transform-origin: bottom;
+      transition: transform 0.45s cubic-bezier(0.25,0,0,1);
+    }
+    .channel-row:hover { padding-left: 12px; }
+    .channel-row:hover::before { transform: scaleY(1); }
+
+    .channel-name {
+      font-family: var(--f-body);
+      font-size: 15px; font-weight: 400; align-self: center;
+    }
+    .channel-id {
+      font-family: var(--f-mono);
+      font-size: 11px; font-weight: 300;
+      color: var(--muted); align-self: center;
+      transition: color 0.3s;
+    }
+    .channel-row:hover .channel-id { color: var(--ink); }
+    .channel-proto {
+      font-family: var(--f-mono);
+      font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--accent); align-self: center; text-align: right;
+    }
+
+    .copy-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      margin-top: 32px; padding: 13px 28px;
+      border: 1px solid var(--hairline-hi);
+      background: transparent; cursor: pointer;
+      font-family: var(--f-mono);
+      font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--muted);
+      transition: all 0.4s cubic-bezier(0.25,0,0,1);
+    }
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .copy-btn.copied { background: var(--accent); border-color: var(--accent); color: var(--cream); }
+
+    .contact-footer {
+      font-family: var(--f-mono); font-size: 10px;
+      letter-spacing: 1px; color: var(--hairline-hi); line-height: 1.8;
+      border-top: 1px solid var(--hairline); padding-top: 24px;
+    }
+
+    /* ── RIGHT ── */
+    .contact-right {
+      padding: 80px 60px;
+      display: flex; flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .right-kicker {
+      font-family: var(--f-mono);
+      font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--hairline-hi); margin-bottom: 40px;
+    }
+
+    /* EQ meter */
+    .eq-label {
+      font-family: var(--f-mono);
+      font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--hairline-hi); margin-bottom: 14px;
+    }
+    .eq-meter {
+      display: flex; align-items: flex-end;
+      gap: 3px; height: 110px; margin-bottom: 8px;
+    }
+    .eq-bar-wrap {
+      flex: 1; height: 100%;
+      display: flex; flex-direction: column;
+      justify-content: flex-end; align-items: stretch; gap: 3px;
+    }
+    .eq-peak {
+      height: 3px; background: var(--accent);
+      border-radius: 1px; opacity: 0;
+      flex-shrink: 0;
+      transition: opacity 0.2s;
+    }
+    .eq-bar {
+      background: var(--accent); opacity: 0.55;
+      border-radius: 1px 1px 0 0;
+      transition: height 0.12s cubic-bezier(0.32,0,0.16,1);
+      flex-shrink: 0;
+    }
+    .eq-scale {
+      display: flex; justify-content: space-between;
+      margin-bottom: 48px;
+    }
+    .eq-scale span {
+      font-family: var(--f-mono); font-size: 8px;
+      color: var(--hairline-hi); letter-spacing: 0.5px;
+    }
+
+    /* TX log */
+    .tx-label {
+      font-family: var(--f-mono);
+      font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--hairline-hi); margin-bottom: 16px;
+    }
+    .tx-item {
+      display: flex; gap: 12px; align-items: baseline;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--hairline);
+      opacity: 0; transform: translateX(-10px);
+      transition: opacity 0.7s cubic-bezier(0.25,0,0,1), transform 0.7s cubic-bezier(0.25,0,0,1);
+    }
+    .tx-item.in { opacity: 1; transform: none; }
+    .tx-arrow { font-family: var(--f-mono); font-size: 9px; color: var(--accent); flex-shrink: 0; }
+    .tx-text { font-family: var(--f-body); font-size: 13px; font-weight: 300; color: var(--ink); line-height: 1.5; }
+    .tx-date { font-family: var(--f-mono); font-size: 10px; color: var(--hairline-hi); margin-left: auto; flex-shrink: 0; }
+
+    /* Sig */
+    .contact-sig {
+      border-top: 1px solid var(--hairline); padding-top: 32px; margin-top: 48px;
+    }
+    .sig-text {
+      font-family: var(--f-display);
+      font-size: clamp(16px,2vw,22px); font-weight: 300; font-style: italic;
+      color: var(--muted); line-height: 1.6; margin-bottom: 12px;
+    }
+    .sig-name {
+      font-family: var(--f-display); font-size: 13px;
+      font-weight: 400; color: var(--hairline-hi);
+    }
+
+    @media(max-width:900px){
+      .contact-wrap { grid-template-columns: 1fr; }
+      .contact-left { border-right: none; border-bottom: 1px solid var(--hairline); padding: 60px 24px; }
+      .contact-right { padding: 60px 24px; }
+    }
+  </style>
+</head>
+<body>
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+<div id="page-veil"></div>
+
+<nav id="nav">
+  <a href="index.html" class="nav-profile">
+    <div class="nav-avatar"><span class="nav-avatar-initials">SR</span></div>
+    <div class="nav-profile-info">
+      <span class="nav-profile-name">Siddhesh Ram K.</span>
+      <span class="nav-profile-role">AI/ML Engineer</span>
+    </div>
+  </a>
+  <div class="nav-divider"></div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="projects.html">Projects</a>
+    <a href="skills.html">Skills</a>
+    <a href="contact.html" class="active">Contact</a>
+  </div>
+</nav>
+
+<div class="contact-wrap">
+  <div class="contact-left">
+    <div>
+      <div class="reveal">
+        <p class="heading-eyebrow">Transmission Open</p>
+        <h1 class="heading-main" data-text="Let's talk.">Let's talk.</h1>
+        <span class="gold-rule"></span>
+        <p class="heading-sub">Available for the right work.<br/>Response window: within 24 hours.</p>
+      </div>
+
+      <div class="reveal reveal-d1">
+        <div class="channel-header">
+          <span>Channel</span><span>Identifier</span><span>Protocol</span>
+        </div>
+        <a href="mailto:siddheshramk@gmail.com" class="channel-row" data-no-transition>
+          <span class="channel-name">Email</span>
+          <span class="channel-id">siddheshramk@gmail.com</span>
+          <span class="channel-proto">SMTP ↗</span>
+        </a>
+        <a href="https://www.linkedin.com/in/siddhesh-ram-krishnachandran-90ab2831a" target="_blank" class="channel-row" data-no-transition>
+          <span class="channel-name">LinkedIn</span>
+          <span class="channel-id">siddhesh-ram-krishnachandran</span>
+          <span class="channel-proto">HTTPS ↗</span>
+        </a>
+        <a href="https://github.com/Siddheshram05" target="_blank" class="channel-row" data-no-transition>
+          <span class="channel-name">GitHub</span>
+          <span class="channel-id">Siddheshram05</span>
+          <span class="channel-proto">GIT ↗</span>
+        </a>
+        <a href="https://leetcode.com/u/Siddheshram05/" target="_blank" class="channel-row" data-no-transition>
+          <span class="channel-name">LeetCode</span>
+          <span class="channel-id">Siddheshram05</span>
+          <span class="channel-proto">HTTPS ↗</span>
+        </a>
+        <button class="copy-btn" id="copy-btn" data-hover>
+          <span id="copy-icon">⊕</span>
+          <span id="copy-label">Copy Email</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="contact-footer reveal reveal-d3">
+      © 2025 Siddhesh Ram Krishnachandran<br/>
+      Chennai, Tamil Nadu, India
+    </div>
+  </div>
+
+  <div class="contact-right">
+    <div>
+      <p class="right-kicker reveal">Signal</p>
+      <div class="reveal reveal-d1">
+        <p class="eq-label">Live broadcast</p>
+        <div class="eq-meter" id="eq-meter"></div>
+        <div class="eq-scale">
+          <span>0</span><span>—6</span><span>—12</span><span>—18</span><span>—24 dB</span>
+        </div>
+      </div>
+
+      <p class="tx-label reveal reveal-d2">Recent Transmissions</p>
+      <div class="tx-item" id="tx0">
+        <span class="tx-arrow">▸</span>
+        <span class="tx-text">NVIDIA cuOpt Bug #5525189 — officially acknowledged</span>
+        <span class="tx-date">2025</span>
+      </div>
+      <div class="tx-item" id="tx1">
+        <span class="tx-arrow">▸</span>
+        <span class="tx-text">Data Analyst Internship — RR Donnelley</span>
+        <span class="tx-date">Jun 2025</span>
+      </div>
+      <div class="tx-item" id="tx2">
+        <span class="tx-arrow">▸</span>
+        <span class="tx-text">IIT Madras BS Data Science — Diploma cleared</span>
+        <span class="tx-date">2024</span>
+      </div>
+      <div class="tx-item" id="tx3">
+        <span class="tx-arrow">▸</span>
+        <span class="tx-text">Joint Marketing Head — CSE, SRM Easwari</span>
+        <span class="tx-date">Apr 2024</span>
+      </div>
+      <div class="tx-item" id="tx4">
+        <span class="tx-arrow">▸</span>
+        <span class="tx-text">Smart Traffic Management System — deployed</span>
+        <span class="tx-date">Apr 2024</span>
+      </div>
+    </div>
+
+    <div class="contact-sig reveal reveal-d4">
+      <p class="sig-text">"The goal isn't to build technology.<br/>It's to solve the problem."</p>
+      <p class="sig-name">— Siddhesh Ram Krishnachandran</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// EQ METER
+(function(){
+  const meter = document.getElementById('eq-meter');
+  if (!meter) return;
+  const N = 22;
+  const bases = [52,68,44,78,58,88,48,72,62,84,46,70,56,80,60,76,50,66,86,40,74,54];
+  const bars = [], peaks = [], ptimers = new Array(N).fill(0);
+  for (let i=0;i<N;i++){
+    const w=document.createElement('div'); w.className='eq-bar-wrap';
+    const pk=document.createElement('div'); pk.className='eq-peak';
+    const b=document.createElement('div');  b.className='eq-bar'; b.style.height='4px';
+    w.appendChild(pk); w.appendChild(b); meter.appendChild(w);
+    bars.push(b); peaks.push({el:pk,h:0});
+  }
+  let t=0;
+  (function tick(){
+    t+=0.038;
+    bars.forEach((b,i)=>{
+      const base = bases[i]/100;
+      const h = Math.max(0.04, Math.min(1,
+        base + Math.sin(t*1.1+i*0.45)*0.16
+             + Math.sin(t*0.65+i*0.8)*0.10
+             + Math.sin(t*2.3+i*0.25)*0.05
+      ));
+      b.style.height = (h*110)+'px';
+      const p = peaks[i];
+      if(h>=p.h){ p.h=h; ptimers[i]=55; p.el.style.opacity='0.85'; }
+      else {
+        ptimers[i]--;
+        if(ptimers[i]<=0){ p.h=Math.max(0,p.h-0.009); p.el.style.opacity=p.h>0.06?'0.45':'0'; }
+      }
+      p.el.style.height='3px';
+      p.el.style.marginBottom=((1-p.h)*110+3)+'px';
+    });
+    requestAnimationFrame(tick);
+  })();
+})();
+
+// TX LOG
+(function(){
+  ['tx0','tx1','tx2','tx3','tx4'].forEach((id,i)=>{
+    setTimeout(()=>{ const el=document.getElementById(id); if(el) el.classList.add('in'); }, 500+i*340);
+  });
+})();
+
+// COPY EMAIL
+(function(){
+  const btn=document.getElementById('copy-btn');
+  if(!btn) return;
+  btn.addEventListener('click',()=>{
+    navigator.clipboard.writeText('siddheshramk@gmail.com').then(()=>{
+      btn.classList.add('copied');
+      document.getElementById('copy-icon').textContent='✓';
+      document.getElementById('copy-label').textContent='Copied';
+      setTimeout(()=>{
+        btn.classList.remove('copied');
+        document.getElementById('copy-icon').textContent='⊕';
+        document.getElementById('copy-label').textContent='Copy Email';
+      },2400);
+    });
+  });
+})();
+</script>
+<script src="shared.js"></script>
+</body>
+</html>

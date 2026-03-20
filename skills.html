@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Skills — Siddhesh Ram</title>
+  <link rel="stylesheet" href="shared.css"/>
+  <style>
+    body { overflow:hidden; }
+    @media(max-width:768px){ body{overflow:auto;} }
+
+    /* ── LAYOUT ── */
+    .skills-wrap {
+      position:relative; z-index:10;
+      height:calc(100vh - 64px);
+      margin-top:64px;
+      display:flex;
+    }
+
+    /* ── LEFT PANEL ── */
+    .skills-left {
+      width:320px; flex-shrink:0;
+      padding:48px 40px;
+      border-right:1px solid var(--border);
+      display:flex; flex-direction:column;
+      gap:32px;
+      overflow-y:auto;
+    }
+
+    .skills-intro h2 {
+      font-family:var(--font-display);
+      font-size:38px; font-weight:800;
+      letter-spacing:-2px; line-height:1.1;
+      margin-bottom:12px;
+    }
+    .skills-intro p {
+      font-size:13px; color:var(--text-muted);
+      line-height:1.7;
+    }
+
+    /* CATEGORY FILTERS */
+    .filter-label {
+      font-family:var(--font-mono); font-size:10px;
+      letter-spacing:2px; text-transform:uppercase;
+      color:var(--text-dim); margin-bottom:12px;
+    }
+    .filter-pills {
+      display:flex; flex-wrap:wrap; gap:8px;
+    }
+    .pill {
+      padding:6px 14px;
+      border:1px solid var(--border);
+      border-radius:100px;
+      font-family:var(--font-mono); font-size:11px;
+      letter-spacing:0.5px;
+      color:var(--text-muted);
+      cursor:pointer; background:none;
+      transition:all 0.2s;
+    }
+    .pill:hover, .pill.active {
+      border-color:var(--accent);
+      color:var(--accent);
+      background:rgba(200,255,0,0.06);
+    }
+
+    /* SELECTED NODE INFO */
+    .node-info-box {
+      background:var(--bg-card);
+      border:1px solid var(--border);
+      border-radius:6px; padding:24px;
+      opacity:0; transform:translateY(10px);
+      transition:all 0.3s var(--ease-out-expo);
+      pointer-events:none;
+    }
+    .node-info-box.visible {
+      opacity:1; transform:translateY(0);
+      pointer-events:all;
+    }
+    .ni-name {
+      font-family:var(--font-display);
+      font-size:22px; font-weight:800;
+      letter-spacing:-0.5px; margin-bottom:8px;
+    }
+    .ni-cat {
+      font-family:var(--font-mono); font-size:10px;
+      letter-spacing:2px; text-transform:uppercase;
+      color:var(--accent); margin-bottom:12px;
+    }
+    .ni-level {
+      margin-bottom:16px;
+    }
+    .ni-bar-track {
+      height:2px; background:rgba(255,255,255,0.08);
+      border-radius:1px; margin-top:6px; position:relative;
+    }
+    .ni-bar-fill {
+      height:100%; background:var(--accent);
+      border-radius:1px;
+      box-shadow:0 0 8px rgba(200,255,0,0.5);
+      transition:width 0.8s var(--ease-out-expo);
+    }
+    .ni-level-label {
+      font-family:var(--font-mono); font-size:11px;
+      color:var(--text-dim); letter-spacing:1px;
+    }
+    .ni-connections {
+      font-family:var(--font-mono); font-size:12px;
+      color:var(--text-muted); line-height:1.8;
+    }
+
+    /* ── GRAPH AREA ── */
+    .graph-area {
+      flex:1; position:relative; overflow:hidden;
+    }
+    #skills-graph {
+      width:100%; height:100%;
+    }
+
+    /* D3 NODE STYLES */
+    .node-circle {
+      cursor:pointer;
+      transition:r 0.2s;
+    }
+    .node-label {
+      font-family:'DM Mono', monospace;
+      font-size:11px; fill:#E8E8F0;
+      pointer-events:none;
+      text-anchor:middle;
+      dominant-baseline:central;
+    }
+    .node-label.center-label {
+      font-size:13px; font-weight:500;
+      fill:#C8FF00;
+    }
+    .link-line {
+      stroke:rgba(200,255,0,0.15);
+      stroke-width:1;
+    }
+    .link-line.highlighted {
+      stroke:rgba(200,255,0,0.5);
+      stroke-width:1.5;
+    }
+
+    /* HINT TEXT */
+    .graph-hint {
+      position:absolute; bottom:24px; right:24px;
+      font-family:var(--font-mono); font-size:11px;
+      color:var(--text-dim); letter-spacing:1.5px;
+      text-transform:uppercase;
+    }
+
+    @media(max-width:768px){
+      body{overflow:auto;}
+      .skills-wrap{flex-direction:column;height:auto;}
+      .skills-left{width:100%;border-right:none;border-bottom:1px solid var(--border);}
+      .graph-area{height:60vh;}
+    }
+  </style>
+</head>
+<body>
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<div id="page-transition"></div>
+
+<nav id="lab-nav">
+  <a href="index.html" class="nav-logo">SRK</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="projects.html">Projects</a>
+    <a href="skills.html" class="active">Skills</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <div class="nav-page-id">04 / 05 — SKILLS</div>
+</nav>
+
+<div class="skills-wrap">
+  <!-- LEFT PANEL -->
+  <div class="skills-left">
+    <div class="skills-intro">
+      <div class="section-eyebrow">Expertise</div>
+      <h2>Skill Graph</h2>
+      <p>An interactive map of my technical skills. Drag, hover, and explore connections.</p>
+    </div>
+
+    <div>
+      <div class="filter-label">Filter by category</div>
+      <div class="filter-pills">
+        <button class="pill active" data-cat="all">All</button>
+        <button class="pill" data-cat="languages">Languages</button>
+        <button class="pill" data-cat="aiml">AI/ML</button>
+        <button class="pill" data-cat="cloud">Cloud</button>
+        <button class="pill" data-cat="data">Data</button>
+      </div>
+    </div>
+
+    <div class="node-info-box" id="node-info">
+      <div class="ni-name" id="ni-name">—</div>
+      <div class="ni-cat" id="ni-cat">—</div>
+      <div class="ni-level">
+        <div class="ni-level-label" id="ni-level-label">Proficiency</div>
+        <div class="ni-bar-track">
+          <div class="ni-bar-fill" id="ni-bar" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="ni-connections" id="ni-connections"></div>
+    </div>
+  </div>
+
+  <!-- GRAPH -->
+  <div class="graph-area">
+    <svg id="skills-graph"></svg>
+    <div class="graph-hint">Drag nodes to rearrange</div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+(function(){
+
+const NODES = [
+  // Core hub
+  { id:'srk',     label:'SRK',         cat:'hub',       size:28, proficiency:100 },
+  // Languages
+  { id:'python',  label:'Python',       cat:'languages', size:20, proficiency:90 },
+  { id:'sql',     label:'SQL',          cat:'languages', size:18, proficiency:85 },
+  { id:'java',    label:'Java',         cat:'languages', size:16, proficiency:75 },
+  // AI/ML
+  { id:'sklearn', label:'scikit-learn', cat:'aiml',      size:18, proficiency:88 },
+  { id:'tf',      label:'TensorFlow',   cat:'aiml',      size:17, proficiency:80 },
+  { id:'torch',   label:'PyTorch',      cat:'aiml',      size:17, proficiency:80 },
+  { id:'xgb',    label:'XGBoost',       cat:'aiml',      size:16, proficiency:86 },
+  { id:'spacy',   label:'spaCy',        cat:'aiml',      size:15, proficiency:78 },
+  { id:'langchain',label:'LangChain',   cat:'aiml',      size:16, proficiency:85 },
+  { id:'autogen', label:'AutoGen',      cat:'aiml',      size:15, proficiency:82 },
+  { id:'langgraph',label:'LangGraph',   cat:'aiml',      size:15, proficiency:80 },
+  // Cloud
+  { id:'gcp',     label:'Vertex AI',    cat:'cloud',     size:16, proficiency:75 },
+  { id:'aws',     label:'AWS Bedrock',  cat:'cloud',     size:16, proficiency:70 },
+  { id:'nim',     label:'NVIDIA NIM',   cat:'cloud',     size:15, proficiency:85 },
+  // Data
+  { id:'pandas',  label:'pandas',       cat:'data',      size:18, proficiency:90 },
+  { id:'numpy',   label:'NumPy',        cat:'data',      size:17, proficiency:90 },
+  { id:'powerbi', label:'Power BI',     cat:'data',      size:16, proficiency:82 },
+  { id:'tableau', label:'Tableau',      cat:'data',      size:16, proficiency:82 },
+  { id:'docker',  label:'Docker',       cat:'data',      size:15, proficiency:80 },
+  { id:'git',     label:'Git',          cat:'data',      size:15, proficiency:85 },
+];
+
+const LINKS = [
+  // Python is central
+  {source:'srk',    target:'python'},
+  {source:'srk',    target:'sql'},
+  {source:'srk',    target:'java'},
+  {source:'python', target:'sklearn'},
+  {source:'python', target:'tf'},
+  {source:'python', target:'torch'},
+  {source:'python', target:'xgb'},
+  {source:'python', target:'spacy'},
+  {source:'python', target:'langchain'},
+  {source:'python', target:'autogen'},
+  {source:'python', target:'langgraph'},
+  {source:'python', target:'pandas'},
+  {source:'python', target:'numpy'},
+  {source:'langchain',target:'langgraph'},
+  {source:'langchain',target:'autogen'},
+  {source:'tf',    target:'torch'},
+  {source:'sklearn',target:'xgb'},
+  {source:'srk',   target:'gcp'},
+  {source:'srk',   target:'aws'},
+  {source:'srk',   target:'nim'},
+  {source:'gcp',   target:'tf'},
+  {source:'aws',   target:'torch'},
+  {source:'nim',   target:'autogen'},
+  {source:'pandas',target:'numpy'},
+  {source:'sql',   target:'pandas'},
+  {source:'srk',   target:'powerbi'},
+  {source:'srk',   target:'tableau'},
+  {source:'powerbi',target:'tableau'},
+  {source:'pandas',target:'powerbi'},
+  {source:'srk',   target:'docker'},
+  {source:'srk',   target:'git'},
+  {source:'docker',target:'git'},
+];
+
+const CAT_COLORS = {
+  hub:'#C8FF00',
+  languages:'#00C8FF',
+  aiml:'#FF9F3F',
+  cloud:'#FF5F57',
+  data:'#C8FF00',
+};
+
+const CAT_NAMES = {
+  hub:'Core',
+  languages:'Programming Languages',
+  aiml:'AI / ML Frameworks',
+  cloud:'Cloud & Infrastructure',
+  data:'Data & Analytics',
+};
+
+const svg = d3.select('#skills-graph');
+let W = svg.node().clientWidth, H = svg.node().clientHeight;
+
+function resize(){
+  W = svg.node().clientWidth; H = svg.node().clientHeight;
+  if(simulation) simulation.force('center', d3.forceCenter(W/2, H/2)).restart();
+}
+window.addEventListener('resize', resize);
+
+// Defs: glow filter
+const defs = svg.append('defs');
+const glow = defs.append('filter').attr('id','glow');
+glow.append('feGaussianBlur').attr('stdDeviation','3').attr('result','blur');
+const feMerge = glow.append('feMerge');
+feMerge.append('feMergeNode').attr('in','blur');
+feMerge.append('feMergeNode').attr('in','SourceGraphic');
+
+const g = svg.append('g');
+
+// Links
+const linkSel = g.append('g').selectAll('line')
+  .data(LINKS).join('line').attr('class','link-line');
+
+// Nodes group
+const nodeG = g.append('g').selectAll('g')
+  .data(NODES).join('g')
+  .attr('class','node-g')
+  .call(d3.drag()
+    .on('start', (e,d)=>{ if(!e.active) simulation.alphaTarget(0.3).restart(); d.fx=d.x; d.fy=d.y; })
+    .on('drag',  (e,d)=>{ d.fx=e.x; d.fy=e.y; })
+    .on('end',   (e,d)=>{ if(!e.active) simulation.alphaTarget(0); d.fx=null; d.fy=null; })
+  );
+
+nodeG.append('circle')
+  .attr('class','node-circle')
+  .attr('r', d=>d.size)
+  .attr('fill', d=>{
+    if(d.cat==='hub') return '#C8FF00';
+    return 'rgba(13,13,26,0.9)';
+  })
+  .attr('stroke', d=>CAT_COLORS[d.cat])
+  .attr('stroke-width', d=>d.cat==='hub'?0:1.5)
+  .style('filter', d=>d.cat==='hub'?'url(#glow)':'none');
+
+nodeG.append('text')
+  .attr('class', d=>d.cat==='hub'?'node-label center-label':'node-label')
+  .text(d=>d.label)
+  .attr('fill', d=>d.cat==='hub'?'#04040A':'#E8E8F0')
+  .style('font-size', d=>d.size > 17 ? '12px':'10px');
+
+// Simulation
+const simulation = d3.forceSimulation(NODES)
+  .force('link', d3.forceLink(LINKS).id(d=>d.id).distance(80).strength(0.6))
+  .force('charge', d3.forceManyBody().strength(-220))
+  .force('center', d3.forceCenter(W/2, H/2))
+  .force('collision', d3.forceCollide(d=>d.size+12))
+  .on('tick', ()=>{
+    linkSel
+      .attr('x1',d=>d.source.x).attr('y1',d=>d.source.y)
+      .attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
+    nodeG.attr('transform',d=>`translate(${d.x},${d.y})`);
+  });
+
+// Hover / click
+let activeNode=null;
+nodeG.on('mouseenter', (e,d)=>{
+  // Dim all, highlight connected
+  const connected=new Set(LINKS.filter(l=>l.source.id===d.id||l.target.id===d.id).flatMap(l=>[l.source.id,l.target.id]));
+  nodeG.selectAll('circle').attr('opacity', n=>connected.has(n.id)||n.id===d.id?1:0.2);
+  linkSel.classed('highlighted', l=>l.source.id===d.id||l.target.id===d.id);
+  linkSel.attr('opacity', l=>(l.source.id===d.id||l.target.id===d.id)?1:0.1);
+  // Scale up
+  d3.select(e.currentTarget).select('circle').attr('r', d.size*1.25);
+  showInfo(d);
+})
+.on('mouseleave', (e,d)=>{
+  nodeG.selectAll('circle').attr('opacity',1);
+  linkSel.classed('highlighted',false).attr('opacity',1);
+  d3.select(e.currentTarget).select('circle').attr('r', d.size);
+});
+
+function showInfo(d){
+  const box = document.getElementById('node-info');
+  document.getElementById('ni-name').textContent = d.label;
+  document.getElementById('ni-cat').textContent = CAT_NAMES[d.cat] || d.cat;
+  document.getElementById('ni-bar').style.width = d.proficiency+'%';
+  document.getElementById('ni-level-label').textContent = `Proficiency — ${d.proficiency}%`;
+  const conns = LINKS
+    .filter(l=>l.source.id===d.id||l.target.id===d.id)
+    .map(l=>l.source.id===d.id?l.target.id:l.source.id)
+    .map(id=>NODES.find(n=>n.id===id)?.label).filter(Boolean);
+  document.getElementById('ni-connections').innerHTML =
+    conns.length ? `<span style="color:var(--text-dim);letter-spacing:1px;font-size:10px;text-transform:uppercase;">Connected to</span><br/>`+conns.join(' · ') : '';
+  box.classList.add('visible');
+}
+
+// Filter pills
+document.querySelectorAll('.pill').forEach(pill=>{
+  pill.addEventListener('click',()=>{
+    document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+    pill.classList.add('active');
+    const cat=pill.dataset.cat;
+    nodeG.attr('opacity', d=> cat==='all'||d.cat===cat||d.cat==='hub' ? 1 : 0.15);
+    linkSel.attr('opacity', l=>{
+      if(cat==='all') return 1;
+      const sc=NODES.find(n=>n.id===l.source.id)?.cat;
+      const tc=NODES.find(n=>n.id===l.target.id)?.cat;
+      return (sc===cat||tc===cat||sc==='hub'||tc==='hub') ? 1 : 0.05;
+    });
+  });
+});
+
+})();
+</script>
+
+<script src="shared.js"></script>
+</body>
+</html>

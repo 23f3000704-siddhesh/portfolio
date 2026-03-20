@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Siddhesh Ram Krishnachandran</title>
+  <meta name="description" content="AI/ML Engineer & Data Scientist — SRM Easwari · IIT Madras · RR Donnelley"/>
+  <link rel="stylesheet" href="shared.css"/>
+  <style>
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      padding: 0 var(--margin);
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 0;
+      align-items: center;
+      padding-top: 60px;
+      position: relative;
+    }
+
+    /* gold vertical rule */
+    .hero-rule {
+      position: absolute;
+      left: calc(var(--margin) - 20px);
+      top: 80px; bottom: 80px;
+      width: 1.5px;
+      background: linear-gradient(to bottom, transparent, var(--accent) 20%, var(--accent) 80%, transparent);
+      opacity: 0;
+      animation: ruleIn 1.4s cubic-bezier(0.25,0,0,1) 0.3s forwards;
+    }
+    @keyframes ruleIn {
+      from { opacity:0; transform: scaleY(0); transform-origin: top; }
+      to   { opacity:0.7; transform: scaleY(1); transform-origin: top; }
+    }
+
+    /* name */
+    .hero-left { padding-left: 12px; }
+
+    .hero-badge {
+      font-family: var(--f-mono);
+      font-size: 10px; font-weight: 300;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 32px;
+      display: flex; align-items: center; gap: 10px;
+      opacity: 0;
+      animation: fadeUp 0.9s cubic-bezier(0.25,0,0,1) 0.2s forwards;
+    }
+    .hero-badge::before {
+      content: '';
+      display: block; width: 20px; height: 1px;
+      background: var(--accent);
+    }
+
+    .hero-name {
+      font-family: var(--f-display);
+      font-size: clamp(64px, 9vw, 128px);
+      font-weight: 400;
+      letter-spacing: -3px;
+      line-height: 0.95;
+      color: var(--ink);
+      margin-bottom: 32px;
+      overflow: hidden;
+    }
+
+    /* each word wraps a span for clip reveal */
+    .name-line {
+      display: block;
+      overflow: hidden;
+    }
+    .name-line span {
+      display: block;
+      transform: translateY(110%);
+      animation: slideUp 1s cubic-bezier(0.25,0,0,1) forwards;
+    }
+    .name-line:nth-child(1) span { animation-delay: 0.35s; }
+    .name-line:nth-child(2) span { animation-delay: 0.55s; }
+
+    @keyframes slideUp {
+      to { transform: translateY(0); }
+    }
+
+    /* fields table */
+    .hero-fields {
+      margin-bottom: 48px;
+      opacity: 0;
+      animation: fadeUp 0.9s cubic-bezier(0.25,0,0,1) 0.85s forwards;
+    }
+    .field-row {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--hairline);
+      gap: 16px;
+    }
+    .field-row:first-child { border-top: 1px solid var(--hairline); }
+    .field-key {
+      font-family: var(--f-mono);
+      font-size: 10px; font-weight: 300;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--hairline-hi);
+    }
+    .field-val {
+      font-family: var(--f-body);
+      font-size: 13px; font-weight: 300;
+      color: var(--muted);
+      letter-spacing: 0.2px;
+    }
+    .field-val.live {
+      color: var(--accent);
+      display: flex; align-items: center; gap: 7px;
+    }
+    .live-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--accent);
+      animation: livePulse 2.4s ease infinite;
+    }
+    @keyframes livePulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.5); }
+      50%      { box-shadow: 0 0 0 5px rgba(201,168,76,0); }
+    }
+
+    /* CTA row */
+    .hero-cta {
+      display: flex; gap: 0; align-items: center;
+      opacity: 0;
+      animation: fadeUp 0.9s cubic-bezier(0.25,0,0,1) 1.05s forwards;
+    }
+    .btn-primary {
+      font-family: var(--f-body);
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--cream);
+      background: var(--ink);
+      border: 1px solid var(--ink);
+      padding: 14px 32px;
+      text-decoration: none;
+      transition: background 0.4s var(--silk), color 0.4s var(--silk), border-color 0.4s;
+      display: inline-block;
+    }
+    .btn-primary:hover { background: var(--accent); border-color: var(--accent); color: var(--cream); }
+    .btn-ghost {
+      font-family: var(--f-body);
+      font-size: 11px; font-weight: 400;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--muted);
+      background: transparent;
+      border: none;
+      padding: 14px 32px;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .btn-ghost:hover { color: var(--ink); }
+
+    /* ── RIGHT PANEL — coordinate canvas ── */
+    .hero-right {
+      height: calc(100vh - 60px);
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0;
+      animation: fadeIn 1.6s cubic-bezier(0.25,0,0,1) 0.6s forwards;
+    }
+    #coord-canvas {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+    }
+    .coord-label {
+      position: absolute;
+      font-family: var(--f-mono);
+      font-size: 10px; font-weight: 300;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      pointer-events: none;
+    }
+    .coord-label.lat { bottom: 80px; right: 24px; }
+    .coord-label.lon { bottom: 60px; right: 24px; }
+    .coord-label.ts  { top: 80px; right: 24px; }
+
+    /* scroll cue */
+    .scroll-cue {
+      position: absolute; bottom: 48px; left: var(--margin);
+      display: flex; align-items: center; gap: 12px;
+      opacity: 0;
+      animation: fadeIn 1s cubic-bezier(0.25,0,0,1) 1.6s forwards;
+    }
+    .scroll-line {
+      width: 40px; height: 1px;
+      background: var(--hairline-hi);
+      position: relative; overflow: hidden;
+    }
+    .scroll-line::after {
+      content: '';
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: var(--accent);
+      transform: translateX(-100%);
+      animation: scanLine 2s cubic-bezier(0.25,0,0,1) infinite 1.6s;
+    }
+    @keyframes scanLine {
+      0%   { transform: translateX(-100%); }
+      50%  { transform: translateX(0); }
+      100% { transform: translateX(100%); }
+    }
+    .scroll-text {
+      font-family: var(--f-mono);
+      font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--hairline-hi);
+    }
+
+    /* ── TICKER STRIP ── */
+    .ticker-wrap {
+      overflow: hidden;
+      border-top: 1px solid var(--hairline-hi);
+      border-bottom: 1px solid var(--hairline-hi);
+      background: var(--ink);
+      padding: 12px 0;
+    }
+    .ticker-track {
+      display: flex; gap: 0;
+      width: max-content;
+      animation: ticker 28s linear infinite;
+    }
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .ticker-track:hover { animation-play-state: paused; }
+    .ticker-item {
+      font-family: var(--f-mono);
+      font-size: 10px; font-weight: 300;
+      letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--cream);
+      padding: 0 28px;
+      white-space: nowrap;
+      opacity: 0.75;
+    }
+    .ticker-item.gold { color: var(--accent); opacity: 1; }
+
+    /* ── BELOW-FOLD SECTIONS ── */
+    .below-fold {
+      padding: 0 var(--margin);
+    }
+
+    /* Editorial quote */
+    .quote-section {
+      padding: 120px 0 100px;
+      max-width: 800px;
+    }
+    .quote-mark {
+      font-family: var(--f-display);
+      font-size: 80px; line-height: 0.6;
+      color: var(--accent); opacity: 0.4;
+      margin-bottom: 16px; display: block;
+      font-weight: 300;
+    }
+    .quote-text {
+      font-family: var(--f-display);
+      font-size: clamp(26px, 3.5vw, 44px);
+      font-weight: 300; font-style: italic;
+      line-height: 1.3; letter-spacing: -0.5px;
+      color: var(--ink);
+      margin-bottom: 28px;
+    }
+    .quote-attr {
+      font-family: var(--f-mono);
+      font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--hairline-hi);
+    }
+
+    /* Rooms navigation — 3 big editorial links */
+    .rooms-section {
+      padding: 60px 0 140px;
+      border-top: 1px solid var(--hairline);
+    }
+    .rooms-label {
+      font-family: var(--f-mono);
+      font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--hairline-hi); margin-bottom: 0;
+    }
+    .room-link {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding: 28px 0;
+      border-bottom: 1px solid var(--hairline);
+      text-decoration: none;
+      color: var(--ink);
+      transition: padding-left 0.5s var(--silk);
+      position: relative; overflow: hidden;
+    }
+    .room-link::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 0;
+      background: var(--accent-dim);
+      transition: width 0.6s var(--silk);
+      pointer-events: none;
+    }
+    .room-link:hover { padding-left: 20px; }
+    .room-link:hover::before { width: 100%; }
+    .room-title {
+      font-family: var(--f-display);
+      font-size: clamp(28px, 4vw, 52px);
+      font-weight: 400; letter-spacing: -1px;
+    }
+    .room-meta {
+      font-family: var(--f-mono);
+      font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--hairline-hi);
+      transition: color 0.3s;
+    }
+    .room-link:hover .room-meta { color: var(--accent); }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(24px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity:0; }
+      to   { opacity:1; }
+    }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-right { display: none; }
+    }
+    @media (max-width: 600px) {
+      .hero-name { font-size: 64px; letter-spacing: -2px; }
+      .room-title { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+<div id="page-veil"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="index.html" class="nav-profile">
+    <div class="nav-avatar"><span class="nav-avatar-initials">SR</span></div>
+    <div class="nav-profile-info">
+      <span class="nav-profile-name">Siddhesh Ram K.</span>
+      <span class="nav-profile-role">AI/ML Engineer</span>
+    </div>
+  </a>
+  <div class="nav-divider"></div>
+  <div class="nav-links">
+    <a href="index.html" class="active">Home</a>
+    <a href="about.html">About</a>
+    <a href="projects.html">Projects</a>
+    <a href="skills.html">Skills</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-rule"></div>
+
+  <div class="hero-left">
+    <div class="hero-badge">Open to work &nbsp;·&nbsp; Chennai, India</div>
+
+    <h1 class="hero-name">
+      <span class="name-line"><span>Siddhesh</span></span>
+      <span class="name-line"><span>Ram K.</span></span>
+    </h1>
+
+    <div class="hero-fields">
+      <div class="field-row">
+        <span class="field-key">Affiliation</span>
+        <span class="field-val">SRM Easwari · IIT Madras · RR Donnelley</span>
+      </div>
+      <div class="field-row">
+        <span class="field-key">Discipline</span>
+        <span class="field-val">AI / ML Engineering · Data Science</span>
+      </div>
+      <div class="field-row">
+        <span class="field-key">Status</span>
+        <span class="field-val live">
+          <span class="live-dot"></span>Available for opportunities
+        </span>
+      </div>
+      <div class="field-row">
+        <span class="field-key">Recognition</span>
+        <span class="field-val">NVIDIA Bug #5525189 · Acknowledged</span>
+      </div>
+    </div>
+
+    <div class="hero-cta">
+      <a href="projects.html" class="btn-primary" data-magnetic>View Projects</a>
+      <a href="contact.html" class="btn-ghost">Get in touch →</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <canvas id="coord-canvas"></canvas>
+    <div class="coord-label lat">13.0827° N</div>
+    <div class="coord-label lon">80.2707° E</div>
+    <div class="coord-label ts" id="live-ts">——</div>
+  </div>
+
+  <div class="scroll-cue">
+    <span class="scroll-line"></span>
+    <span class="scroll-text">Scroll</span>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap reveal">
+  <div class="ticker-track" id="ticker">
+    <!-- filled by JS -->
+  </div>
+</div>
+
+<!-- BELOW FOLD -->
+<div class="below-fold">
+
+  <section class="quote-section reveal reveal-d1">
+    <span class="quote-mark">"</span>
+    <p class="quote-text">
+      No one cares about any technology unless it's a solution to a problem.
+    </p>
+    <span class="quote-attr">Field doctrine · Siddhesh Ram K.</span>
+  </section>
+
+  <hr class="hr-light"/>
+
+  <section class="rooms-section">
+    <p class="rooms-label reveal">The Rooms</p>
+
+    <a href="about.html" class="room-link reveal reveal-d1">
+      <span class="room-title">About</span>
+      <span class="room-meta">Subject profile →</span>
+    </a>
+    <a href="projects.html" class="room-link reveal reveal-d2">
+      <span class="room-title">Projects</span>
+      <span class="room-meta">Field work →</span>
+    </a>
+    <a href="skills.html" class="room-link reveal reveal-d3">
+      <span class="room-title">Skills</span>
+      <span class="room-meta">Technical map →</span>
+    </a>
+    <a href="contact.html" class="room-link reveal reveal-d4">
+      <span class="room-title">Contact</span>
+      <span class="room-meta">Initiate →</span>
+    </a>
+  </section>
+
+</div>
+
+<!-- TICKER JS -->
+<script>
+(function(){
+  const items = [
+    ['Python',''],['SQL',''],['TensorFlow',''],['PyTorch',''],
+    ['LangChain',''],['LangGraph',''],['AutoGen',''],['scikit-learn',''],
+    ['XGBoost',''],['pandas',''],['NumPy',''],['Power BI',''],
+    ['Tableau',''],['AWS Bedrock',''],['Vertex AI',''],['NVIDIA NIM',''],
+    ['Docker',''],['Git',''],['spaCy',''],['Java',''],
+    ['NVIDIA Bug #5525189','gold'],['IIT Madras',''],['SRM Easwari',''],['RR Donnelley','gold'],
+  ];
+  const doubled = [...items,...items];
+  const track = document.getElementById('ticker');
+  doubled.forEach(([text, cls]) => {
+    const span = document.createElement('span');
+    span.className = 'ticker-item' + (cls ? ' ' + cls : '');
+    span.textContent = text + '  ·  ';
+    track.appendChild(span);
+  });
+})();
+</script>
+
+<!-- COORDINATE CANVAS -->
+<script>
+(function(){
+  const canvas = document.getElementById('coord-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, animFrame;
+
+  function resize() {
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // mouse influence
+  let mx = 0, my = 0;
+  document.addEventListener('mousemove', e => {
+    const r = canvas.getBoundingClientRect();
+    mx = e.clientX - r.left;
+    my = e.clientY - r.top;
+  });
+
+  // live timestamp
+  const tsEl = document.getElementById('live-ts');
+  setInterval(() => {
+    if (tsEl) tsEl.textContent = new Date().toISOString().slice(11,19) + ' IST';
+  }, 1000);
+
+  const INK     = 'rgba(14,14,14,';
+  const GOLD    = 'rgba(201,168,76,';
+  let t = 0;
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    t += 0.006;
+
+    const cx = W / 2, cy = H / 2;
+
+    // Grid lines — hairline, warm
+    ctx.strokeStyle = INK + '0.06)';
+    ctx.lineWidth = 0.5;
+    const step = 40;
+    for (let x = 0; x < W; x += step) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for (let y = 0; y < H; y += step) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+    // Mouse-reactive ripple
+    const dist = Math.sqrt((mx-cx)**2 + (my-cy)**2);
+
+    // Concentric rings — breathe with time + mouse
+    [72, 130, 190].forEach((baseR, i) => {
+      const r = baseR + Math.sin(t + i * 1.1) * 6 + dist * 0.03;
+      const alpha = 0.08 - i * 0.018;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.strokeStyle = INK + alpha + ')';
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+    });
+
+    // Inner gold ring — tighter, more alive
+    const goldR = 32 + Math.sin(t * 1.3) * 3;
+    ctx.beginPath();
+    ctx.arc(cx, cy, goldR, 0, Math.PI * 2);
+    ctx.strokeStyle = GOLD + '0.35)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Crosshair
+    ctx.strokeStyle = INK + '0.1)';
+    ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(W, cy); ctx.stroke();
+
+    // Scanning arc — rotates slowly
+    const scanAngle = t * 0.4;
+    const scanR = 190;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, scanR, scanAngle - 0.04, scanAngle + 0.04);
+    ctx.closePath();
+    ctx.fillStyle = GOLD + '0.07)';
+    ctx.fill();
+
+    // Crosshair center dot
+    ctx.beginPath();
+    ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+    ctx.fillStyle = GOLD + '0.6)';
+    ctx.fill();
+
+    // Tick marks on outer ring
+    for (let i = 0; i < 36; i++) {
+      const angle = (i / 36) * Math.PI * 2;
+      const r1 = 192, r2 = i % 9 === 0 ? 200 : 196;
+      ctx.beginPath();
+      ctx.moveTo(cx + Math.cos(angle) * r1, cy + Math.sin(angle) * r1);
+      ctx.lineTo(cx + Math.cos(angle) * r2, cy + Math.sin(angle) * r2);
+      ctx.strokeStyle = INK + (i % 9 === 0 ? '0.2' : '0.08') + ')';
+      ctx.lineWidth = i % 9 === 0 ? 1 : 0.5;
+      ctx.stroke();
+    }
+
+    animFrame = requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+
+<script src="shared.js"></script>
+</body>
+</html>

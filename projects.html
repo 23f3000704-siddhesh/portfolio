@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Projects — Siddhesh Ram</title>
+  <link rel="stylesheet" href="shared.css"/>
+  <style>
+    /* ── CIRCUIT BACKGROUND ── */
+    #circuit-canvas {
+      position:fixed; inset:0; z-index:0;
+      pointer-events:none; opacity:0.25;
+    }
+
+    /* ── LAYOUT ── */
+    .projects-wrap {
+      position:relative; z-index:10;
+      padding:120px 80px 80px;
+      max-width:1300px; margin:0 auto;
+    }
+
+    .projects-header {
+      margin-bottom:80px;
+    }
+
+    /* ── DOSSIER GRID ── */
+    .dossier-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill, minmax(500px,1fr));
+      gap:32px;
+    }
+
+    /* ── DOSSIER CARD ── */
+    .dossier-card {
+      background:var(--bg-card);
+      border:1px solid var(--border);
+      border-radius:8px;
+      position:relative;
+      overflow:hidden;
+      transition:border-color 0.4s, box-shadow 0.4s;
+      cursor:pointer;
+    }
+    .dossier-card:hover {
+      border-color:var(--border-hi);
+      box-shadow:0 0 40px rgba(200,255,0,0.06);
+    }
+
+    /* CLIP REVEAL — card "opens" on hover */
+    .dossier-inner {
+      padding:48px;
+      clip-path:inset(0 100% 0 0);
+      transition:clip-path 0s;
+    }
+    .dossier-card.opened .dossier-inner {
+      clip-path:inset(0 0% 0 0);
+      transition:clip-path 0.6s cubic-bezier(0.16,1,0.3,1);
+    }
+    .dossier-fold {
+      padding:48px;
+      position:absolute; inset:0;
+      display:flex; flex-direction:column; justify-content:space-between;
+      transition:opacity 0.3s;
+    }
+    .dossier-card.opened .dossier-fold {
+      opacity:0; pointer-events:none;
+    }
+
+    /* FOLD STATE */
+    .fold-top {
+      display:flex; justify-content:space-between; align-items:flex-start;
+    }
+    .project-num {
+      font-family:var(--font-mono); font-size:11px;
+      letter-spacing:3px; color:var(--text-dim);
+    }
+    .status-badge-card {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:4px 12px; border-radius:100px;
+      font-family:var(--font-mono); font-size:10px;
+      letter-spacing:2px; text-transform:uppercase;
+    }
+    .status-completed {
+      background:rgba(200,255,0,0.08);
+      border:1px solid rgba(200,255,0,0.2);
+      color:var(--accent);
+    }
+    .status-reported {
+      background:rgba(255,100,0,0.08);
+      border:1px solid rgba(255,100,0,0.25);
+      color:#FF9F3F;
+    }
+    .status-active {
+      background:rgba(0,200,255,0.08);
+      border:1px solid rgba(0,200,255,0.25);
+      color:#00C8FF;
+    }
+    .status-dot-badge {
+      width:5px; height:5px; border-radius:50%;
+      background:currentColor;
+      animation:pulse-dot 2s ease infinite;
+    }
+
+    .fold-title {
+      font-family:var(--font-display); font-size:32px;
+      font-weight:800; letter-spacing:-1px;
+      color:var(--text);
+    }
+    .fold-sub {
+      font-family:var(--font-mono); font-size:12px;
+      color:var(--text-dim); letter-spacing:1px;
+      margin-top:8px;
+    }
+    .fold-open-hint {
+      font-family:var(--font-mono); font-size:11px;
+      color:var(--accent); letter-spacing:2px;
+      text-transform:uppercase;
+      display:flex; align-items:center; gap:8px;
+    }
+    .fold-open-hint::after {
+      content:'→';
+      transition:transform 0.3s;
+    }
+    .dossier-card:hover .fold-open-hint::after {
+      transform:translateX(4px);
+    }
+
+    /* OPENED STATE — full content */
+    .dossier-inner {
+      display:flex; flex-direction:column; gap:20px;
+    }
+    .inner-top {
+      display:flex; justify-content:space-between; align-items:flex-start;
+    }
+    .inner-title {
+      font-family:var(--font-display); font-size:26px;
+      font-weight:800; letter-spacing:-0.5px;
+    }
+    .inner-close {
+      font-family:var(--font-mono); font-size:11px;
+      color:var(--text-dim); letter-spacing:2px;
+      cursor:pointer; padding:4px 8px;
+      border:1px solid var(--border); border-radius:3px;
+      background:none; color:var(--text-muted);
+      transition:all 0.2s;
+    }
+    .inner-close:hover { color:var(--accent); border-color:var(--border-hi); }
+    .inner-desc {
+      font-size:14px; color:var(--text-muted); line-height:1.8;
+    }
+    .inner-tags {
+      display:flex; flex-wrap:wrap; gap:8px;
+    }
+    .itag {
+      padding:5px 12px;
+      border:1px solid var(--border);
+      border-radius:3px;
+      font-family:var(--font-mono); font-size:11px;
+      letter-spacing:0.5px; color:var(--text-dim);
+      transition:all 0.2s;
+    }
+    .itag:hover { border-color:var(--accent); color:var(--accent); }
+
+    .inner-link {
+      display:inline-flex; align-items:center; gap:8px;
+      font-family:var(--font-mono); font-size:12px;
+      color:var(--accent); text-decoration:none;
+      letter-spacing:1px; text-transform:uppercase;
+      transition:gap 0.2s;
+    }
+    .inner-link:hover { gap:14px; }
+
+    /* ── TERMINAL CARD (NVIDIA) ── */
+    .terminal-card {
+      grid-column: 1 / -1;
+      background:#04040A;
+      border:1px solid rgba(255,80,0,0.3);
+      border-radius:8px;
+      overflow:hidden;
+      position:relative;
+    }
+    .terminal-card:hover {
+      border-color:rgba(255,80,0,0.6);
+      box-shadow:0 0 40px rgba(255,80,0,0.08);
+    }
+    .term-titlebar {
+      background:#0D0D0D;
+      padding:12px 20px;
+      display:flex; align-items:center; gap:12px;
+      border-bottom:1px solid rgba(255,255,255,0.05);
+    }
+    .term-dot { width:12px; height:12px; border-radius:50%; }
+    .term-dot-r { background:#FF5F57; }
+    .term-dot-y { background:#FEBC2E; }
+    .term-dot-g { background:#28C840; }
+    .term-title-text {
+      font-family:var(--font-mono); font-size:12px;
+      color:var(--text-dim); letter-spacing:1px;
+      margin-left:8px;
+    }
+    .term-status-badge {
+      margin-left:auto;
+    }
+    .term-body {
+      padding:32px 40px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:48px;
+      align-items:start;
+    }
+    .term-log {
+      font-family:var(--font-mono); font-size:13px;
+      line-height:2; color:#6B6B80;
+    }
+    .term-log .err { color:#FF5F57; }
+    .term-log .warn { color:#FEBC2E; }
+    .term-log .ok { color:#28C840; }
+    .term-log .acc { color:#FF9F3F; }
+    .term-log .cursor-blink {
+      display:inline-block; width:8px; height:14px;
+      background:#C8FF00; vertical-align:bottom;
+      animation:blink 1s step-start infinite;
+    }
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+    .term-info h3 {
+      font-family:var(--font-display); font-size:28px;
+      font-weight:800; letter-spacing:-1px;
+      margin-bottom:16px;
+    }
+    .term-info p {
+      font-size:14px; color:var(--text-muted); line-height:1.8;
+      margin-bottom:20px;
+    }
+    .term-badge-row {
+      display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px;
+    }
+
+    @media(max-width:900px){
+      .projects-wrap{padding:100px 24px 60px;}
+      .dossier-grid{grid-template-columns:1fr;}
+      .term-body{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<div id="page-transition"></div>
+<canvas id="circuit-canvas"></canvas>
+
+<nav id="lab-nav">
+  <a href="index.html" class="nav-logo">SRK</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="projects.html" class="active">Projects</a>
+    <a href="skills.html">Skills</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <div class="nav-page-id">03 / 05 — PROJECTS</div>
+</nav>
+
+<div class="projects-wrap">
+  <div class="projects-header reveal">
+    <div class="section-eyebrow">Portfolio</div>
+    <h2 class="section-heading" style="font-size:clamp(48px,7vw,96px);letter-spacing:-3px;">
+      Featured<br/>Projects
+    </h2>
+  </div>
+
+  <div class="dossier-grid">
+
+    <!-- NVIDIA TERMINAL CARD -->
+    <div class="terminal-card reveal">
+      <div class="term-titlebar">
+        <div class="term-dot term-dot-r"></div>
+        <div class="term-dot term-dot-y"></div>
+        <div class="term-dot term-dot-g"></div>
+        <span class="term-title-text">cuopt_crash_log.txt — CUDA Illegal Memory Access</span>
+        <div class="term-status-badge">
+          <span class="status-badge-card status-reported">
+            <span class="status-dot-badge"></span>
+            Officially Reported
+          </span>
+        </div>
+      </div>
+      <div class="term-body">
+        <div class="term-log" id="term-log">
+          <div>> Initializing cuOpt Cloud API v24.x</div>
+          <div class="ok">> Connection established ✓</div>
+          <div>> Loading multi-vehicle optimization dataset</div>
+          <div>> Vehicles: 15 · Locations: 847 · Constraints: 1200</div>
+          <div class="warn">> WARNING: Validation schema mismatch detected</div>
+          <div>> Submitting solver request...</div>
+          <div class="err">> CUDA ERROR: Illegal memory access</div>
+          <div class="err">> Signal: SIGSEGV at 0x7f3a2b4c0000</div>
+          <div class="err">> GPU process terminated unexpectedly</div>
+          <div class="acc">> Bug reported → Bug ID: #5525189</div>
+          <div class="ok">> Acknowledged by NVIDIA Engineering ✓</div>
+          <div>> <span class="cursor-blink"></span></div>
+        </div>
+        <div class="term-info">
+          <h3>NVIDIA cuOpt<br/>Bug Discovery</h3>
+          <p>Discovered and reported a critical validation bug in NVIDIA's cuOpt Cloud API that caused GPU crashes during multi-vehicle optimization. The bug triggered CUDA illegal memory access on large constraint datasets.</p>
+          <div class="term-badge-row">
+            <span class="itag">NVIDIA cuOpt</span>
+            <span class="itag">CUDA</span>
+            <span class="itag">GPU Optimization</span>
+            <span class="itag">Vehicle Routing</span>
+          </div>
+          <a href="https://www.linkedin.com/pulse/reported-validation-bug-nvidia-cuopt-cloud-api-solver-siddhesh-ram-e7ykc" target="_blank" class="inner-link" data-no-transition>Read Full Write-up →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRAFFIC MANAGEMENT DOSSIER -->
+    <div class="dossier-card reveal" id="card-traffic">
+      <div class="dossier-fold">
+        <div class="fold-top">
+          <span class="project-num">PROJECT / 001</span>
+          <span class="status-badge-card status-completed">
+            <span class="status-dot-badge"></span>Completed
+          </span>
+        </div>
+        <div>
+          <div class="fold-title">Smart Traffic<br/>Management</div>
+          <div class="fold-sub">Computer Vision · Jan–Apr 2024</div>
+        </div>
+        <div class="fold-open-hint">Open Dossier</div>
+      </div>
+      <div class="dossier-inner">
+        <div class="inner-top">
+          <div class="inner-title">Smart Traffic<br/>Management System</div>
+          <button class="inner-close" onclick="closeCard('card-traffic')">✕ Close</button>
+        </div>
+        <p class="inner-desc">
+          Built a priority-based traffic control framework to detect ambulances, optimize green signal timing, and trigger real-time alerts using computer vision modules. Developed a full pipeline from camera feed ingestion to signal actuation logic.
+        </p>
+        <div class="inner-tags">
+          <span class="itag">Computer Vision</span>
+          <span class="itag">Python</span>
+          <span class="itag">OpenCV</span>
+          <span class="itag">Real-time Processing</span>
+          <span class="itag">Traffic Optimization</span>
+          <span class="itag">Object Detection</span>
+        </div>
+        <div>
+          <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">Timeline</div>
+          <div style="font-family:var(--font-mono);font-size:13px;color:var(--accent);">Jan 2024 → Apr 2024</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POLYNOMIAL GRAPHER DOSSIER -->
+    <div class="dossier-card reveal reveal-delay-1" id="card-poly">
+      <div class="dossier-fold">
+        <div class="fold-top">
+          <span class="project-num">PROJECT / 002</span>
+          <span class="status-badge-card status-completed">
+            <span class="status-dot-badge"></span>Completed
+          </span>
+        </div>
+        <div>
+          <div class="fold-title">Polynomial<br/>Graph Plotter</div>
+          <div class="fold-sub">Python · NumPy · Matplotlib</div>
+        </div>
+        <div class="fold-open-hint">Open Dossier</div>
+      </div>
+      <div class="dossier-inner">
+        <div class="inner-top">
+          <div class="inner-title">Polynomial Graph<br/>Plotting Tool</div>
+          <button class="inner-close" onclick="closeCard('card-poly')">✕ Close</button>
+        </div>
+        <p class="inner-desc">
+          Created a Python visualization tool inspired by Desmos to plot and compare multiple polynomial equations interactively. Built using NumPy for mathematical computation and Matplotlib for interactive, layered visualizations with dynamic equation input.
+        </p>
+        <div class="inner-tags">
+          <span class="itag">Python</span>
+          <span class="itag">NumPy</span>
+          <span class="itag">Matplotlib</span>
+          <span class="itag">Data Visualization</span>
+          <span class="itag">Interactive Tools</span>
+          <span class="itag">Mathematics</span>
+        </div>
+        <div>
+          <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">Stack</div>
+          <div style="font-family:var(--font-mono);font-size:13px;color:var(--accent);">Python · NumPy · Matplotlib</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- IIT MADRAS DOSSIER -->
+    <div class="dossier-card reveal reveal-delay-2" id="card-iit">
+      <div class="dossier-fold">
+        <div class="fold-top">
+          <span class="project-num">PROGRAM / 003</span>
+          <span class="status-badge-card status-active">
+            <span class="status-dot-badge"></span>Active
+          </span>
+        </div>
+        <div>
+          <div class="fold-title">IIT Madras<br/>Data Science</div>
+          <div class="fold-sub">BS · Diploma Level</div>
+        </div>
+        <div class="fold-open-hint">Open Dossier</div>
+      </div>
+      <div class="dossier-inner">
+        <div class="inner-top">
+          <div class="inner-title">IIT Madras<br/>BS Data Science</div>
+          <button class="inner-close" onclick="closeCard('card-iit')">✕ Close</button>
+        </div>
+        <p class="inner-desc">
+          Pursuing a Bachelor of Science in Data Science and Applications from IIT Madras — one of India's most competitive online degree programs. Currently at Diploma level, focusing on machine learning, data visualization, and statistical analysis.
+        </p>
+        <div class="inner-tags">
+          <span class="itag">Machine Learning</span>
+          <span class="itag">Statistics</span>
+          <span class="itag">Data Visualization</span>
+          <span class="itag">Python</span>
+          <span class="itag">SQL</span>
+        </div>
+        <a href="https://ds.study.iitm.ac.in/student/23F3000704" target="_blank" class="inner-link" data-no-transition>View Profile →</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── DOSSIER OPEN / CLOSE ──
+document.querySelectorAll('.dossier-card').forEach(card=>{
+  card.querySelector('.dossier-fold').addEventListener('click',()=>{
+    card.classList.add('opened');
+  });
+});
+function closeCard(id){
+  document.getElementById(id).classList.remove('opened');
+}
+
+// ── CIRCUIT BOARD BACKGROUND ──
+(function(){
+  const canvas = document.getElementById('circuit-canvas');
+  const ctx = canvas.getContext('2d');
+  let W,H;
+
+  function resize(){
+    W=canvas.width=window.innerWidth;
+    H=canvas.height=window.innerHeight;
+  }
+  window.addEventListener('resize',resize); resize();
+
+  const lines=[]; const GRID=60;
+
+  function initLines(){
+    lines.length=0;
+    for(let x=0;x<W;x+=GRID){
+      for(let y=0;y<H;y+=GRID){
+        if(Math.random()<0.35){
+          const dir = Math.random()<0.5 ? 'h' : 'v';
+          const len = (Math.floor(Math.random()*3)+1)*GRID;
+          lines.push({x,y,dir,len,progress:0,speed:0.005+Math.random()*0.015,alpha:0.3+Math.random()*0.4});
+        }
+      }
+    }
+  }
+  initLines();
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    lines.forEach(l=>{
+      l.progress+=l.speed;
+      if(l.progress>1) l.progress=0;
+      const p=l.progress;
+      ctx.strokeStyle=`rgba(200,255,0,${l.alpha*0.4})`;
+      ctx.lineWidth=1;
+      ctx.beginPath();
+      if(l.dir==='h'){
+        ctx.moveTo(l.x,l.y);
+        ctx.lineTo(l.x+l.len,l.y);
+      } else {
+        ctx.moveTo(l.x,l.y);
+        ctx.lineTo(l.x,l.y+l.len);
+      }
+      ctx.stroke();
+      // Moving dot
+      ctx.fillStyle=`rgba(200,255,0,${l.alpha})`;
+      ctx.beginPath();
+      if(l.dir==='h') ctx.arc(l.x+l.len*p,l.y,2,0,Math.PI*2);
+      else ctx.arc(l.x,l.y+l.len*p,2,0,Math.PI*2);
+      ctx.fill();
+      // Node dots at endpoints
+      ctx.fillStyle=`rgba(200,255,0,0.25)`;
+      ctx.beginPath();
+      ctx.arc(l.x,l.y,3,0,Math.PI*2);
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ── TERMINAL TYPEWRITER ──
+(function(){
+  const logLines = [
+    ['> Initializing cuOpt Cloud API v24.x', ''],
+    ['> Connection established ✓', 'ok'],
+    ['> Loading multi-vehicle optimization dataset', ''],
+    ['> Vehicles: 15 · Locations: 847 · Constraints: 1200', ''],
+    ['> WARNING: Validation schema mismatch detected', 'warn'],
+    ['> Submitting solver request...', ''],
+    ['> CUDA ERROR: Illegal memory access', 'err'],
+    ['> Signal: SIGSEGV at 0x7f3a2b4c0000', 'err'],
+    ['> GPU process terminated unexpectedly', 'err'],
+    ['> Bug reported → Bug ID: #5525189', 'acc'],
+    ['> Acknowledged by NVIDIA Engineering ✓', 'ok'],
+  ];
+  const el = document.getElementById('term-log');
+  el.innerHTML='';
+  let lineIdx=0;
+  function typeLine(){
+    if(lineIdx>=logLines.length){
+      const cursor=document.createElement('div');
+      cursor.innerHTML='> <span class="cursor-blink"></span>';
+      el.appendChild(cursor);
+      return;
+    }
+    const [text,cls]=logLines[lineIdx];
+    const div=document.createElement('div');
+    if(cls) div.className=cls;
+    el.appendChild(div);
+    let charIdx=0;
+    const typeChar=()=>{
+      div.textContent=text.slice(0,charIdx+1);
+      charIdx++;
+      if(charIdx<text.length) setTimeout(typeChar, 18+Math.random()*12);
+      else { lineIdx++; setTimeout(typeLine, 100+Math.random()*200); }
+    };
+    typeChar();
+  }
+  // Start when in view
+  const obs=new IntersectionObserver(entries=>{
+    if(entries[0].isIntersecting){ typeLine(); obs.disconnect(); }
+  },{threshold:0.3});
+  obs.observe(el);
+})();
+</script>
+
+<script src="shared.js"></script>
+</body>
+</html>
